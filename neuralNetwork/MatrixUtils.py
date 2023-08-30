@@ -48,3 +48,20 @@ def getDot(matrix, vector):
         dot.append(row[0]*vector)
 
     return dot
+
+def transposeMatrix(matrix):
+    matrixCopy = list(matrix)
+    transposedMatrix = [[matrixCopy[j][i] for j in range(len(matrixCopy))] for i in range(len(matrixCopy[0]))]
+
+    return transposedMatrix
+
+def subtractVectors(firstVector, secondVector):
+    firstVectorLen = len(firstVector)
+    secondVectorLen = len(secondVector)
+    resultLen = secondVectorLen if firstVectorLen > secondVectorLen else firstVectorLen
+    resultVector = []
+
+    for i in range(0, resultLen):
+        resultVector.append(firstVector[i]-secondVector[i])
+
+    return resultVector
