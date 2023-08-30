@@ -9,7 +9,7 @@ class NeuralNetwork:
     # cause of this, first matrix build by rule: hiddenNodes x inputNodes
     # other matrixes are build by rule:
     # outputNodes x hiddenNodes
-    def __init__(self, inputNodes, hiddenNodes, outputNodes, learningRate) -> None:
+    def __init__(self, inputNodes, hiddenNodes, outputNodes, learningRate):
         self.inputNodes = inputNodes
         self.hiddenNodes = hiddenNodes
         self.outputNodes = outputNodes
@@ -21,7 +21,6 @@ class NeuralNetwork:
         # generate matrixes with weight coefficients
         self.inputToHiddenLayerMatrix = MatrixUtils.generateMatrix(self.hiddenNodes, self.inputNodes)
         self.hiddenToOutputLayerMatrix = MatrixUtils.generateMatrix(self.outputNodes, self.hiddenNodes)
-        pass
 
     def train():
         pass
@@ -39,3 +38,6 @@ class NeuralNetwork:
             finalOutputs.append(self.sigmoid(fi))
 
         return finalOutputs
+
+n = NeuralNetwork(3,3,3,0.3)
+n.query([1.0, 0.5, -1.5])

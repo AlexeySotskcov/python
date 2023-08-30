@@ -26,13 +26,6 @@ def getDotProductOfMatrices(matrix, vector):
     return dot
 
 def getDotByVector(matrix, vector):
-    dot = []
-    for row in matrix:
-        dot.append(row[0]*vector)
-
-    return dot
-
-def getDot(matrix, vector):
     matrixLen = len(matrix[0])
     vectorLen = len(vector)
 
@@ -46,5 +39,12 @@ def getDot(matrix, vector):
             dotElement = dotElement + matrix[i][j] * vector[j]
 
         dot.append(dotElement)
+
+    return dot
+
+def getDot(matrix, vector):
+    dot = []
+    for row in matrix:
+        dot.append(row[0]*vector)
 
     return dot
