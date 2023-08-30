@@ -1,4 +1,7 @@
+import math
+
 import MatrixUtils
+
 
 class NeuralNetwork:
     # W incoming hidden = hiddenNodes x inputNodes (cause of matrix multiply: row to column)
@@ -10,7 +13,10 @@ class NeuralNetwork:
         self.inputNodes = inputNodes
         self.hiddenNodes = hiddenNodes
         self.outputNodes = outputNodes
+        # learning rate
         self.learningRate = learningRate
+        # activation function, use sigmoid
+        self.sigmoid = lambda x: 1 / (1 + math.exp(-x))
 
         # generate matrixes with weight coefficients
         self.inputToHiddenLayerMatrix = MatrixUtils.generateMatrix(self.hiddenNodes, self.inputNodes)
@@ -20,5 +26,16 @@ class NeuralNetwork:
     def train():
         pass
 
-    def query():
-        pass
+    def query(self, inputSignals):
+        hiddenInputs = MatrixUtils.getDotProductOfMatrices(self.inputToHiddenLayerMatrix, inputSignals)
+        hiddenOuputs = []
+        for hi in hiddenInputs:
+            hiddenOuputs.append(self.sigmoid(hi))
+
+        finalInputs = MatrixUtils.getDotProductOfMatrices(self.hiddenToOutputLayerMatrix, hiddenOuputs)
+        finalOutputs = []
+
+        for fi in finalInputs:
+            finalOutputs.append(self.sigmoid(fi))
+
+        return finalOutputs
