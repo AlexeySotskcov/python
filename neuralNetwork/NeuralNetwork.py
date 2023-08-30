@@ -1,3 +1,5 @@
+import MatrixUtils
+
 class NeuralNetwork:
     # W incoming hidden = hiddenNodes x inputNodes (cause of matrix multiply: row to column)
     # [A] x [B] - A (row length), B (column length)
@@ -9,6 +11,10 @@ class NeuralNetwork:
         self.hiddenNodes = hiddenNodes
         self.outputNodes = outputNodes
         self.learningRate = learningRate
+
+        # generate matrixes with weight coefficients
+        self.inputToHiddenLayerMatrix = MatrixUtils.generateMatrix(self.hiddenNodes, self.inputNodes)
+        self.hiddenToOutputLayerMatrix = MatrixUtils.generateMatrix(self.outputNodes, self.hiddenNodes)
         pass
 
     def train():
