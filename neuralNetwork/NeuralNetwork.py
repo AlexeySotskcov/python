@@ -22,16 +22,15 @@ class NeuralNetwork:
         self.inputToHiddenLayerMatrix = MatrixUtils.generateMatrix(self.hiddenNodes, self.inputNodes)
         self.hiddenToOutputLayerMatrix = MatrixUtils.generateMatrix(self.outputNodes, self.hiddenNodes)
 
-    # TODO: improve logic: inputSignals, targetSignals to  [[]] type, and then update MatrixUtils.getDotProductOfMatrices
     def train(self, inputSignals, targetSignals):
         finalOutputs = self.query(inputSignals)
-        outputErrors = MatrixUtils.subtractVectors(targetSignals, MatrixUtils.transposeMatrix(finalOutputs))
+        outputErrors = MatrixUtils.subtractVectors(targetSignals, MatrixUtils.transposeMatrix([finalOutputs]))
 
         return outputErrors
 
 
     def query(self, inputSignals):
-        hiddenInputs = MatrixUtils.getDotProductOfMatrices(self.inputToHiddenLayerMatrix, MatrixUtils.transposeMatrix(inputSignals))
+        hiddenInputs = MatrixUtils.getDotProductOfMatrices(self.inputToHiddenLayerMatrix, MatrixUtils.transposeMatrix([inputSignals]))
         hiddenOuputs = []
         for hi in hiddenInputs:
             hiddenOuputs.append(self.sigmoid(hi))
