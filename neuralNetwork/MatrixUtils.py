@@ -13,12 +13,18 @@ def generateMatrix(rowSize, columnSize):
 
 def generateMatrixWithValue(rowSize, columnSize, value):
     matrix = []
-    for i in range(0, rowSize):
+    if rowSize == 0:
         newRow = []
         for j in range(0, columnSize):
             newRow.append(value)
+        return newRow
+    else:
+        for i in range(0, rowSize):
+            newRow = []
+            for j in range(0, columnSize):
+                newRow.append(value)
 
-        matrix.append(newRow)
+            matrix.append(newRow)
 
     return matrix
 
@@ -32,7 +38,7 @@ def getDotProductOfMatrices(matrix, vector):
     if isinstance(vector, list):
         dot = getDotByVector(matrix, vector)
     else:
-        dot = getDot(matrix, vector)
+        dot = []
 
     return dot
 
@@ -53,12 +59,14 @@ def getDotByVector(matrix, vector):
 
     return dot
 
-def getDot(matrix, vector):
-    dot = []
-    for row in matrix:
-        dot.append(row[0]*vector)
+def multiplyMatrix(matrix, value):
+    result = []
+    for i in range(0, len(matrix)):
+        result.append([])
+        for j in range(0, len(matrix[0])):
+            result[i].append(matrix[i][j]*value)
 
-    return dot
+    return result
 
 def transposeMatrix(matrix):
     matrixCopy = []
@@ -119,5 +127,17 @@ def multiplyMatrices(firstMatrix, secondMatrix):
         result.append([])
         for j in range(firstMatrix[0]):
             result[i][j] += (firstMatrix[i][j] * secondMatrix[j][i])
+
+    return result
+
+def reshape(valuesList, rows, cols):
+    result = []
+    valuesLen = len(valuesList)
+    for i in range(rows):
+        result.append([])
+        for j in range(rows):
+            index = i*rows + j
+            value = valuesList[index] if valuesLen > index else 0
+            result[i].append(float(value))
 
     return result
