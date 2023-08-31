@@ -21,24 +21,46 @@ class NeuralNetwork:
         # generate matrixes with weight coefficients
         self.inputToHiddenLayerMatrix = MatrixUtils.generateMatrix(self.hiddenNodes, self.inputNodes)
         self.hiddenToOutputLayerMatrix = MatrixUtils.generateMatrix(self.outputNodes, self.hiddenNodes)
+        pass
 
     def train(self, inputSignals, targetSignals):
-        finalOutputs = self.query(inputSignals)
-        outputErrors = MatrixUtils.subtractVectors(targetSignals, MatrixUtils.transposeMatrix([finalOutputs]))
-
-        return outputErrors
-
-
-    def query(self, inputSignals):
-        hiddenInputs = MatrixUtils.getDotProductOfMatrices(self.inputToHiddenLayerMatrix, MatrixUtils.transposeMatrix([inputSignals]))
+        hiddenInputs = MatrixUtils.getDotProductOfMatrices(self.inputToHiddenLayerMatrix, MatrixUtils.transposeMatrix(inputSignals))
         hiddenOuputs = []
         for hi in hiddenInputs:
             hiddenOuputs.append(self.sigmoid(hi))
 
-        finalInputs = MatrixUtils.getDotProductOfMatrices(self.hiddenToOutputLayerMatrix, hiddenOuputs)
+        finalInputs = MatrixUtils.getDotProductOfMatrices(self.hiddenToOutputLayerMatrix, MatrixUtils.transposeMatrix(hiddenOuputs))
         finalOutputs = []
 
         for fi in finalInputs:
-            finalOutputs.append(self.sigmoid(fi))
+            finalOutputs.append([self.sigmoid(fi)])
+
+        outputErrors = MatrixUtils.subtractMatrices(MatrixUtils.transposeMatrix(targetSignals), finalOutputs)
+
+        hiddenErrors = MatrixUtils.getDotProductOfMatrices(MatrixUtils.transposeMatrix(self.hiddenToOutputLayerMatrix), outputErrors)
+        # weigth k of matrices
+        hiddenErrorToOutputs = MatrixUtils.multiplyMatrices(hiddenErrors, hiddenOuputs)
+        # (1-sigmoid)
+        deltaSigma = MatrixUtils.addValueToMatrix(-1, hiddenOuputs)
+        deltaErrors = MatrixUtils.multiplyMatrices(hiddenErrorToOutputs, deltaSigma)
+        # result adjustment weights
+        adjustmentMatrix = MatrixUtils.getDotProductOfMatrices(deltaErrors, MatrixUtils.transposeMatrix(inputSignals))
+
+        self.hiddenToOutputLayerMatrix = MatrixUtils.addMatrices(self.hiddenToOutputLayerMatrix, adjustmentMatrix)
+
+        pass
+
+
+    def query(self, inputSignals):
+        hiddenInputs = MatrixUtils.getDotProductOfMatrices(self.inputToHiddenLayerMatrix, MatrixUtils.transposeMatrix(inputSignals))
+        hiddenOuputs = []
+        for hi in hiddenInputs:
+            hiddenOuputs.append(self.sigmoid(hi))
+
+        finalInputs = MatrixUtils.getDotProductOfMatrices(self.hiddenToOutputLayerMatrix, MatrixUtils.transposeMatrix(hiddenOuputs))
+        finalOutputs = []
+
+        for fi in finalInputs:
+            finalOutputs.append([self.sigmoid(fi)])
 
         return finalOutputs
