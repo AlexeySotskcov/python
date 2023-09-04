@@ -43,17 +43,11 @@ def getDotProductOfMatrices(matrix, vector):
     return dot
 
 def getDotByVector(matrix, vector):
-    matrixLen = len(matrix[0])
-    vectorLen = len(vector)
-
-    dotLen = vectorLen if matrixLen > vectorLen else matrixLen
-
     dot = []
-
     for i in range(0, len(matrix)):
         dotElement = 0
-        for j in range(0, dotLen):
-            dotElement = dotElement + matrix[i][j] * vector[i][0]
+        for j in range(0, len(vector)):
+            dotElement = dotElement + float(matrix[i][j]) * float(vector[j][0])
 
         dot.append(dotElement)
 
@@ -62,10 +56,13 @@ def getDotByVector(matrix, vector):
 def multiplyMatrix(matrix, value):
     result = []
     for i in range(0, len(matrix)):
-        result.append([])
-        for j in range(0, len(matrix[0])):
-            result[i].append(matrix[i][j]*value)
-
+        if isinstance(matrix[0], list):
+            result.append([])
+            for j in range(0, len(matrix[0])):
+                result[i].append(float(matrix[i][j])*value)
+        else:
+            for j in range(0, len(matrix[0])):
+                result.append(float(matrix[i][j])*value)
     return result
 
 def transposeMatrix(matrix):
@@ -92,7 +89,7 @@ def subtractMatrices(firstMatrix, secondMatrix):
 
     for i in range(0, len(firstMatrix)):
         for j in range(0, len(firstMatrix[0])):
-            resultmatrix.append(firstMatrix[i][j]-secondMatrix[i][j])
+            resultmatrix[i][j] = (firstMatrix[i][j]-secondMatrix[i][j])
 
     return resultmatrix
 
@@ -113,20 +110,31 @@ def addMatrices(firstMatrix, secondMatrix):
 
     return resultmatrix
 
-def addValueToMatrix(value, matrix):
+def addValueToMatrix(matrix, value):
     matrixCopy = list(matrix)
     for i in range(0, len(matrix)):
-        for j in range(0, len(matrix[0])):
-            matrixCopy[i][j] = matrix[i][j] + value
+        if isinstance(matrix[0], list):
+            for j in range(0, len(matrix[0])):
+                matrixCopy[i][j] += value
+        else:
+            matrixCopy[i] += value
 
     return matrixCopy
 
 def multiplyMatrices(firstMatrix, secondMatrix):
-    result = generateMatrixWithValue(len(firstMatrix), len(firstMatrix[0]), 0)
-    for i in range(firstMatrix):
-        result.append([])
-        for j in range(firstMatrix[0]):
-            result[i][j] += (firstMatrix[i][j] * secondMatrix[j][i])
+    result = []
+    if len(firstMatrix[0]) > 1:
+        result = generateMatrixWithValue(len(firstMatrix), len(firstMatrix[0]), 0)
+        for i in range(len(result)):
+            for j in range(len(result[0])):
+                result[i][j] += (firstMatrix[i][j] * secondMatrix[j][i])
+    else:
+        result = generateMatrixWithValue(len(firstMatrix), 1, 0)
+        for i in range(len(result)):
+            for j in range(len(result[0])):
+                result[i][j] += (firstMatrix[i][j] * secondMatrix[i][j])
+
+
 
     return result
 
@@ -135,9 +143,18 @@ def reshape(valuesList, rows, cols):
     valuesLen = len(valuesList)
     for i in range(rows):
         result.append([])
-        for j in range(rows):
+        for j in range(cols):
             index = i*rows + j
             value = valuesList[index] if valuesLen > index else 0
             result[i].append(float(value))
 
     return result
+
+def getMaxArg(valuesList):
+    if len(valuesList) == 0:
+        return None
+    if len(valuesList) == 1:
+        return valuesList[0]
+    else:
+        maxNum = max(lst[1:])
+        return valuesList[0] if valuesList[0] > maxNum else maxNum

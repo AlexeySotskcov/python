@@ -1,4 +1,6 @@
 import math
+import numpy
+
 
 import MatrixUtils
 
@@ -27,7 +29,7 @@ class NeuralNetwork:
         hiddenInputs = MatrixUtils.getDotProductOfMatrices(self.inputToHiddenLayerMatrix, MatrixUtils.transposeMatrix(inputSignals))
         hiddenOuputs = []
         for hi in hiddenInputs:
-            hiddenOuputs.append(self.sigmoid(hi))
+            hiddenOuputs.append([self.sigmoid(hi)])
 
         finalInputs = MatrixUtils.getDotProductOfMatrices(self.hiddenToOutputLayerMatrix, MatrixUtils.transposeMatrix(hiddenOuputs))
         finalOutputs = []
@@ -35,18 +37,59 @@ class NeuralNetwork:
         for fi in finalInputs:
             finalOutputs.append([self.sigmoid(fi)])
 
-        outputErrors = MatrixUtils.subtractMatrices(MatrixUtils.transposeMatrix(targetSignals), finalOutputs)
 
-        hiddenErrors = MatrixUtils.getDotProductOfMatrices(MatrixUtils.transposeMatrix(self.hiddenToOutputLayerMatrix), outputErrors)
+        print('finalOutputs')
+        print(finalOutputs)
+        print('targetSignals')
+        print(targetSignals)
+        transposedTargetSignals = MatrixUtils.transposeMatrix([targetSignals])
+        print('transposedTargetSignals')
+        print(transposedTargetSignals)
+        outputErrors = MatrixUtils.subtractMatrices(transposedTargetSignals, finalOutputs)
+        print('outputErrors')
+        print(outputErrors)
+
+
+
+        hiddenErrorsList = MatrixUtils.getDotProductOfMatrices(MatrixUtils.transposeMatrix(self.hiddenToOutputLayerMatrix), outputErrors)
+        hiddenErrors = []
+        for he in hiddenErrorsList:
+            hiddenErrors.append([he])
+
         # weigth k of matrices
-        hiddenErrorToOutputs = MatrixUtils.multiplyMatrices(hiddenErrors, hiddenOuputs)
+        hiddenErrorToOutputs = MatrixUtils.multiplyMatrices(outputErrors, finalOutputs)
+        deltaSigmaHidden = MatrixUtils.addValueToMatrix(finalOutputs, -1)
+        deltaErrorsHidden = MatrixUtils.multiplyMatrices(hiddenErrorToOutputs, deltaSigmaHidden)
+        adjustmentHiddenMatrix = MatrixUtils.getDotProductOfMatrices(deltaErrorsHidden, MatrixUtils.transposeMatrix(hiddenOuputs))
+        print('adjustmentHiddenMatrix')
+        print(adjustmentHiddenMatrix)
+        print('self.hiddenToOutputLayerMatrix')
+        print(self.hiddenToOutputLayerMatrix)
+        self.hiddenToOutputLayerMatrix = MatrixUtils.addMatrices(self.hiddenToOutputLayerMatrix, adjustmentHiddenMatrix)
+
+
+        # weigth k of matrices
+        print('hiddenErrors')
+        print(hiddenErrors)
+        print('hiddenOuputs')
+        print(hiddenOuputs)
+
+        hiddenOutputsToErrors = MatrixUtils.multiplyMatrices(hiddenErrors, hiddenOuputs)
         # (1-sigmoid)
-        deltaSigma = MatrixUtils.addValueToMatrix(-1, hiddenOuputs)
-        deltaErrors = MatrixUtils.multiplyMatrices(hiddenErrorToOutputs, deltaSigma)
-        # result adjustment weights
+        deltaSigma = MatrixUtils.addValueToMatrix(hiddenOuputs, -1)
+        deltaErrors = MatrixUtils.multiplyMatrices(hiddenOutputsToErrors, deltaSigma)
+        adjustmentMatrix = MatrixUtils.getDotProductOfMatrices(deltaErrors, MatrixUtils.transposeMatrix(inputSignals))
+        self.inputToHiddenLayerMatrix = MatrixUtils.multiplyMatrix(
+            MatrixUtils.addMatrices(self.inputToHiddenLayerMatrix, adjustmentMatrix),
+            self.learningRate
+        )
+        # result adjustment weight
         adjustmentMatrix = MatrixUtils.getDotProductOfMatrices(deltaErrors, MatrixUtils.transposeMatrix(inputSignals))
 
-        self.hiddenToOutputLayerMatrix = MatrixUtils.addMatrices(self.hiddenToOutputLayerMatrix, adjustmentMatrix)
+        self.hiddenToOutputLayerMatrix = MatrixUtils.multiplyMatrix(
+            MatrixUtils.addMatrices(self.hiddenToOutputLayerMatrix, adjustmentMatrix),
+            self.learningRate
+        )
 
         pass
 
